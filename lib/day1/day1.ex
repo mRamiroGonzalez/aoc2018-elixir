@@ -1,21 +1,37 @@
 defmodule Day1 do
   @moduledoc false
 
-  def part1(input) do
-    Enum.sum(input)
+  @filename "lib/day1/input.txt"
+
+  def part1() do
+    File.stream!(@filename)
+    |> Stream.map(&String.trim/1)
+    |> Stream.map(&String.to_integer/1)
+    |> part1_process
   end
 
-  def part2(input, current_index \\ 0, current_sum \\ 0, values_found \\ []) do
-    new_value = current_sum + Enum.at(input, current_index)
+  def part1_process(stream) do
+    Enum.sum(stream)
+  end
 
-    cond do
-      Enum.member?(values_found, new_value) ->
-        new_value
-      current_index == length(input) - 1 ->
-        part2(input, 0, new_value, [new_value | values_found ])
-      true ->
-        part2(input, current_index + 1, new_value, [new_value | values_found])
-    end
+  # Not mine, see: https://github.com/debajit/advent-of-code-2018/blob/master/day-01-part-2-chronal-calibration.exs
+  def part2() do
+    File.stream!(@filename)
+    |> Stream.cycle()
+    |> Stream.map(&String.trim/1)
+    |> Stream.map(&String.to_integer/1)
+    |> part2_process
+  end
 
+  def part2_process(stream) do
+    stream
+    |> Enum.reduce_while({0, MapSet.new()}, fn x, {sum, seen} ->
+      if MapSet.member?(seen, sum) do
+        {:halt, {sum, seen}}
+      else
+        {:cont, {x + sum, MapSet.put(seen, sum)}}
+      end
+    end)
+    |> elem(0)
   end
 end

@@ -24,4 +24,7 @@ aoc2018-*.tar
 
 # Ignore IDEA files and folders
 .idea/
+*.iml
+
+# Ignore formatter
 .formatter.exs
